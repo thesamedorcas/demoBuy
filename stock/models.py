@@ -6,15 +6,16 @@ from django.contrib.auth.models import User
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.User',related_name='profile', on_delete=models.CASCADE)
     balance = models.FloatField(default=10000.12)
 
     def __str__(self):
         return self.balance
 
 
-class Stocks(models.Model):
-    by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+class Stock(models.Model):
+    by = models.ForeignKey(User,related_name='stocks', on_delete=models.SET_NULL, null=True)
     ticker = models.CharField(max_length=200)
     quantity = models.FloatField()
     price = models.FloatField()
@@ -22,3 +23,14 @@ class Stocks(models.Model):
 
     def __str__(self):
         return str(self.ticker)
+
+# stock meta
+class Ticker(models.Model):
+    exchangeCode = models.CharField(max_length=20)
+    description = models.TextField()
+    ticker = models.CharField(max_length=12)
+    startDate = models.DateTimeField()
+    name = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ['startDate']
